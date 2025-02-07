@@ -50,4 +50,9 @@ The application will be available at http://127.0.0.1:8080.
  5. http://127.0.0.1:8080/brochure-fulldata :
  6. http://127.0.0.1:8080/full-details?property=xyz :
 
+### Render link:
+1. https://intern-6noc.onrender.com/ :
+2. https://intern-6noc.onrender.com/pdf :
+3. https://intern-6noc.onrender.com/properties :
+
 

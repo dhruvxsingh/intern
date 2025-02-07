@@ -19,6 +19,10 @@ def get_properties():
     response = supabase.table("properties").select("*").execute()
     return jsonify(response.data)
 
+@app.route('/')
+def home():
+    return 'Home Page Route'
+
 
 @app.route("/post", methods=["GET"])
 def post_properties():

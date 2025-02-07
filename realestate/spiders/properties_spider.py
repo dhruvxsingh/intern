@@ -30,7 +30,7 @@ import scrapy
 class PropertiesSpider(scrapy.Spider):
     name = "properties"  # Name of the spider
     start_urls = [
-        "https://www.radiancerealty.in/projects/chennai/radiance-solitaire/"
+        "https://www.radiancerealty.in/projects/chennai/radiance-flourish/"
     ]
 
     def parse(self, response):

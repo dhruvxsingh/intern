@@ -27,8 +27,8 @@ def parse_pdf(pdf_path):
     
     # Calculate price range
     if areas and rate_per_sqft:
-        min_price = min(areas) * rate_per_sqft / 100000  # Convert to lakhs
-        max_price = max(areas) * rate_per_sqft / 100000  # Convert to lakhs
+        min_price = min(areas) * rate_per_sqft / 100000  
+        max_price = max(areas) * rate_per_sqft / 100000  
         price_range = f"₹{min_price:.2f}L - ₹{max_price:.2f}L"
     else:
         price_range = "Price not available"
@@ -75,7 +75,7 @@ def save_to_json(data, output_path):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    pdf_path = r"E:\intern\realestate\Rohini_Grandeur (1).pdf"  # Update with your PDF path
+    pdf_path = r"E:\intern\realestate\Rohini_Grandeur (1).pdf"  
     output_path = "property_details.json"
     
     try:

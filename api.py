@@ -6,8 +6,8 @@ import json
 app = Flask(__name__)
 
 # Supabase credentials
-url = "https://orivuzqpjowmgjjxgvwh.supabase.co"  # Replace with your Supabase URL
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaXZ1enFwam93bWdqanhndndoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczODg0ODA3MSwiZXhwIjoyMDU0NDI0MDcxfQ.NxgByv8fAqJuC8gSyFaAp5MZlyM-_0LCnr7GTWBLFhc"  # Replace with your Supabase API key
+url = "https://orivuzqpjowmgjjxgvwh.supabase.co" 
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaXZ1enFwam93bWdqanhndndoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczODg0ODA3MSwiZXhwIjoyMDU0NDI0MDcxfQ.NxgByv8fAqJuC8gSyFaAp5MZlyM-_0LCnr7GTWBLFhc" 
 
 # Create Supabase client
 supabase: Client = create_client(url, key)
@@ -99,7 +99,7 @@ def post_properties_full():
                 "area": properties_response.data[0]['area'],
                 "bedrooms":properties_response.data[0]['bedrooms'],
                 "amenities":pdf_response.data[0]['amenities'],
-                "url": properties_response.data[0]['url']  # Assuming 'url' is from the pdf table
+                "url": properties_response.data[0]['url']  
             }
     combined_data.append(combined_entry)
 
@@ -110,5 +110,4 @@ def post_properties_full():
 
 
 if __name__ == "__main__":
-    # Run Flask app on the default port 5000
     app.run(host="0.0.0.0", port=8080, debug=True)

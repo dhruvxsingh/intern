@@ -66,6 +66,8 @@ def post_properties_pdf():
         with open("property_details.json", "r") as file:
             properties = json.load(file)
 
+            
+
         for property_data in properties:
             data = {
                 "property_name": property_data.get("property_name"),

@@ -70,11 +70,12 @@ def parse_pdf(pdf_path):
     return output
 
 def save_to_json(data, output_path):
+    data = [data]
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    pdf_path = r"G:\College Stuff\6th sem\Rohini_Grandeur (1).pdf"  # Update with your PDF path
+    pdf_path = r"E:\intern\realestate\Rohini_Grandeur (1).pdf"  # Update with your PDF path
     output_path = "property_details.json"
     
     try:

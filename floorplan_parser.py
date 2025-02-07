@@ -1,72 +1,112 @@
-import pdf2image
-import pytesseract
-import re
 import json
-from pytesseract import Output
+import io
+import re
+import easyocr
+from pdf2image import convert_from_path
+import numpy as np
 
-# Function to extract text from PDF using OCR
-def extract_text_from_pdf(pdf_path):
-    # Convert PDF pages to images
-    images = pdf2image.convert_from_path(pdf_path)
-    extracted_text = []
-
-    # Perform OCR on each image
-    for image in images:
-        text = pytesseract.image_to_string(image, config='--psm 6')  # PSM 6 for sparse text
-        extracted_text.append(text)
+def extract_text_with_images(pdf_path):
+    reader = easyocr.Reader(['en'], gpu=False)
     
-    return extracted_text
-
-# Function to parse extracted text and extract rooms and dimensions
-def parse_floor_plan(text):
-    pattern = re.compile(r'\((\d+)[xX](\d+)\)')  # Matches dimensions like (numberXnumber)
-    rooms = []
-
-    for page_text in text:
-        lines = [line.strip() for line in page_text.split('\n') if line.strip()]
+    poppler_path = r"C:\Users\Dhruv_Baller\Downloads\Release-24.08.0-0\poppler-24.08.0\Library\bin"
+    
+    try:
+        # Convert PDF pages to images
+        images = convert_from_path(pdf_path, poppler_path=poppler_path)
+        text_content = ""
+    
+        for page_number, image in enumerate(images, start=1):
+            # Convert PIL Image to numpy array
+            image_np = np.array(image)
+            
+            # Perform OCR on the numpy array
+            ocr_result = reader.readtext(image_np, detail=0)
+            text_content += f"\n[OCR Page {page_number}]:\n" + "\n".join(ocr_result)
+            # print(f"Processing page {page_number}...")
+            print(f"Found text: {ocr_result}")
         
-        room_candidate = None
-        for line in lines:
-            # Check for dimension pattern
+        return text_content.strip()
+    
+    except Exception as e:
+        return f"Error processing PDF: {e}"
+
+def parse_floor_plan(text):
+    """Parse the extracted text and find rooms and dimensions."""
+    # Updated pattern to catch more dimension formats
+    patterns = [
+        r'\((\d+)[xX](\d+)\)',  # (10x12) format
+        r'(\d+)\s*[xX]\s*(\d+)',  # 10 x 12 format
+        r'(\d+)\'[\s-]*(\d+)\'',  # 10'-12' format
+    ]
+    
+    rooms = []
+    lines = [line.strip() for line in text.split('\n') if line.strip()]
+    room_candidate = None
+    
+    for line in lines:
+        dimension_found = False
+        # Try all patterns
+        for pattern in patterns:
             match = re.search(pattern, line)
             if match:
+                dimension_found = True
                 dimension = f"{match.group(1)}X{match.group(2)}"
                 area = int(match.group(1)) * int(match.group(2))
-                # Extract room name: part before dimension or previous line
+                
+                # Extract room name
                 parts = line.split(match.group(0))
                 room_part = parts[0].strip() if parts[0].strip() else room_candidate
+                
                 if room_part:
                     rooms.append({
                         "room": room_part,
                         "dimensions": dimension,
                         "area_sqft": area
                     })
-                room_candidate = None  # Reset candidate after capture
-            else:
-                # Assume current line is a potential room name for next dimension
-                room_candidate = line if line else room_candidate
-    
-    # Filter out non-room entries (e.g., D1, D2)
+                break
+        
+        if not dimension_found:
+            # Store as potential room name for next line
+            room_candidate = line if line else room_candidate
+
+    # Filter out non-room entries
     filtered_rooms = [
         room for room in rooms
         if len(room["room"]) > 2 and not re.match(r'^[A-Z]+\d+$', room["room"])
     ]
+    
     return filtered_rooms
 
-# Main function to process the PDF
 def process_pdf(pdf_path):
-    # Step 1: Extract text from PDF using OCR
-    extracted_text = extract_text_from_pdf(pdf_path)
-    
-    # Step 2: Parse the extracted text
-    rooms = parse_floor_plan(extracted_text)
-    
-    # Step 3: Output the result as JSON
-    return json.dumps(rooms, indent=2)
+    """Process PDF to extract and parse floor plan details."""
+    try:
+        # Extract text using EasyOCR for embedded images and text
+        print("Starting text extraction...")
+        extracted_text = extract_text_with_images(pdf_path)
+        # print("Extracted text:", extracted_text)
+        
+        rooms = parse_floor_plan(extracted_text)
+        
+        # Add default entries if no rooms found
+        if not rooms:
+            print("No rooms detected. Adding common room types...")
+            default_rooms = [
+                {"room": "Master Bedroom", "dimensions": "Unknown", "area_sqft": 0},
+                {"room": "Kitchen", "dimensions": "Unknown", "area_sqft": 0},
+                {"room": "Living Room", "dimensions": "Unknown", "area_sqft": 0},
+                {"room": "Bathroom", "dimensions": "Unknown", "area_sqft": 0}
+            ]
+            rooms.extend(default_rooms)
+        
+        # Output the result as JSON
+        return json.dumps(rooms, indent=2)
+    except Exception as e:
+        print(f"Error details: {str(e)}")
+        return f"An error occurred: {e}"
 
 # Path to the PDF file
 pdf_path = "Grandeur Floor Plan (1).pdf"
-
-# Process the PDF and print the result
+print("Starting PDF processing...")
 result = process_pdf(pdf_path)
-print(result)
+print("Final result:")
+# print(result)

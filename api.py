@@ -1,10 +1,16 @@
 from flask import request,Flask, jsonify
 from supabase import create_client, Client
 import json
-
+from flask_cors import CORS
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
+from realestate.spiders.properties_spider import PropertiesSpider
+import threading
+import subprocess
+import os
 # Initialize Flask app
 app = Flask(__name__)
-
+cors = CORS(app)
 # Supabase credentials
 url = "https://orivuzqpjowmgjjxgvwh.supabase.co" 
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaXZ1enFwam93bWdqanhndndoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczODg0ODA3MSwiZXhwIjoyMDU0NDI0MDcxfQ.NxgByv8fAqJuC8gSyFaAp5MZlyM-_0LCnr7GTWBLFhc" 
@@ -22,6 +28,49 @@ def get_properties():
 @app.route('/')
 def home():
     return 'Home Page Route'
+
+@app.route('/url', methods=["POST"])
+def url_post():
+    data = request.get_json()
+
+    # Extract the 'url' value from the request body
+    url = data.get('url')
+    print(f"URL Received: {url}")
+
+    # Optionally, process the 'url' or perform any action
+    if not url:
+        return jsonify({"message": "URL parameter is required"}), 400
+
+    try:
+        # Define the output file for the Scrapy spider
+        output_file = 'output.json'  # You can modify the path if needed
+
+        # Run the Scrapy process in a separate subprocess with the output file defined
+        process=subprocess.Popen(['scrapy', 'crawl', 'properties', '-o', output_file, '-a', f'url={url}'])
+        process.wait()
+        with open(output_file, "r") as file:
+            properties = json.load(file)
+
+        # Iterate over the scraped properties and insert them into the Supabase database
+        for property_data in properties:
+            data = {
+                "name": property_data.get("name"),
+                "location": property_data.get("location"),
+                "price": property_data.get("price"),
+                "area": property_data.get("area"),
+                "bedrooms": property_data.get("bedrooms"),
+                "url": property_data.get("url"),
+            }
+
+            # Insert data into Supabase
+            response = supabase.table("properties").insert(data).execute()
+            print(f"Inserted property: {data['name']} into database.")
+            os.remove(output_file)
+            print(f"Removed {output_file} after processing.")
+        return jsonify({"message": f"Scrapy spider started for {url}!"}), 200
+    except Exception as e:
+        return jsonify({"message": "Error running spider", "error": str(e)}), 500
+
 
 
 @app.route("/post", methods=["GET"])
@@ -102,12 +151,22 @@ def post_properties_full():
                 "url": properties_response.data[0]['url']  
             }
     combined_data.append(combined_entry)
-
-
-            
-
     return jsonify(combined_data)
 
+
+# from gradio_client import Client, handle_file
+
+# client = Client("fancyfeast/joy-caption-alpha-two")
+# result = client.predict(
+# 		input_image=handle_file('https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png'),
+# 		caption_type="Descriptive",
+# 		caption_length="long",
+# 		extra_options=[],
+# 		name_input="Hello!!",
+# 		custom_prompt="Hello!!",
+# 		api_name="/stream_chat"
+# )
+# print(result)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)

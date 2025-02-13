@@ -1,0 +1,116 @@
+{
+  "pages": [
+    {
+      "page_number": 1,
+      "status": "success",
+      "rooms": [
+        {
+          "room": "Kitchen",
+          "dimensions": "14'3\" x 12'10\"",
+          "area": "180.83 sqft"
+        },
+        {
+          "room": "Att. Toilet",
+          "dimensions": "9'0\" x 5'0\"",
+          "area": "45 sqft"
+        },
+        {
+          "room": "M. Bedroom",
+          "dimensions": "14'3\" x 12'0\"",
+          "area": "171.67 sqft"
+        },
+        {
+          "room": "Living + Dining",
+          "dimensions": "11'0\" x 25'8\"",
+          "area": "281.67 sqft"
+        },
+        {
+          "room": "Bedroom-02",
+          "dimensions": "11'3\" x 10'0\"",
+          "area": "113 sqft"
+        },
+        {
+          "room": "Att. Toilet",
+          "dimensions": "7'6\" x 4'9\"",
+          "area": "36.75 sqft"
+        },
+        {
+          "room": "Bedroom-03",
+          "dimensions": "11'3\" x 10'0\"",
+          "area": "113 sqft"
+        },
+        {
+          "room": "Balcony",
+          "dimensions": "11'0\" x 5'0\"",
+          "area": "55 sqft"
+        },
+        {
+          "room": "Att. Toilet",
+          "dimensions": "7'6\" x 4'9\"",
+          "area": "36.75 sqft"
+        }
+      ]
+    },
+    {
+      "page_number": 2,
+      "status": "success",
+      "rooms": [
+        {
+          "room": "BEDROOM-02",
+          "dimensions": "11'3\" x 10'6\"",
+          "area": "119.25 sqft"
+        },
+        {
+          "room": "Att. TOILET",
+          "dimensions": "80\" x 5'0\"",
+          "area": "33.33 sqft"
+        },
+        {
+          "room": "Att. TOILET",
+          "dimensions": "80\" x 5'0\"",
+          "area": "33.33 sqft"
+        },
+        {
+          "room": "M. BEDROOM",
+          "dimensions": "12'0\" x 11'3\"",
+          "area": "135.00 sqft"
+        },
+        {
+          "room": "LIFT",
+          "dimensions": "5'3\" x 6'6\"",
+          "area": "34.67 sqft"
+        },
+        {
+          "room": "LOBBY",
+          "dimensions": "6'4\" x 6'6\"",
+          "area": "42.00 sqft"
+        },
+        {
+          "room": "LIVING + DINING",
+          "dimensions": "11'0\" x 22'4\"",
+          "area": "246.67 sqft"
+        },
+        {
+          "room": "BALCONY",
+          "dimensions": "11'0\" x 5'0\"",
+          "area": "55.00 sqft"
+        },
+        {
+          "room": "BEDROOM-03",
+          "dimensions": "11'3\" x 10'6\"",
+          "area": "119.25 sqft"
+        },
+        {
+          "room": "Att. TOILET",
+          "dimensions": "7'6\" x 5'0\"",
+          "area": "37.50 sqft"
+        },
+        {
+          "room": "KITCHEN",
+          "dimensions": "11'3\" x 11'1\"",
+          "area": "125.67 sqft"
+        }
+      ]
+    }
+  ]
+}

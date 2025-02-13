@@ -1,0 +1,86 @@
+{
+  "pages": [
+    {
+      "page_number": 1,
+      "status": "success",
+      "rooms": [
+        {
+          "room": "Balcony",
+          "dimensions": "10 x 3",
+          "area": "30 sqft."
+        },
+        {
+          "room": "Utility",
+          "dimensions": "3 x 4",
+          "area": "12 sqft."
+        },
+        {
+          "room": "Kitchen",
+          "dimensions": "6 x 7",
+          "area": "42 sqft."
+        },
+        {
+          "room": "Bedroom",
+          "dimensions": "6 x 8",
+          "area": "48 sqft."
+        },
+        {
+          "room": "Living Room",
+          "dimensions": "12 x 9",
+          "area": "108 sqft."
+        },
+        {
+          "room": "Platea Living Room",
+          "dimensions": "12 x 9",
+          "area": "108 sqft."
+        },
+        {
+          "room": "Bedroom",
+          "dimensions": "6 x 8",
+          "area": "48 sqft."
+        },
+        {
+          "room": "Bathroom",
+          "dimensions": "4 x 5",
+          "area": "20 sqft."
+        },
+        {
+          "room": "Bedroom",
+          "dimensions": "6 x 8",
+          "area": "48 sqft."
+        },
+        {
+          "room": "Bedroom",
+          "dimensions": "6 x 8",
+          "area": "48 sqft."
+        },
+        {
+          "room": "Bedroom",
+          "dimensions": "6 x 8",
+          "area": "48 sqft."
+        },
+        {
+          "room": "Bedroom",
+          "dimensions": "6 x 8",
+          "area": "48 sqft."
+        },
+        {
+          "room": "Bathroom",
+          "dimensions": "4 x 5",
+          "area": "20 sqft."
+        },
+        {
+          "room": "Bedroom",
+          "dimensions": "6 x 8",
+          "area": "48 sqft."
+        }
+      ]
+    },
+    {
+      "page_number": 2,
+      "status": "error",
+      "error": "list index out of range",
+      "rooms": []
+    }
+  ]
+}

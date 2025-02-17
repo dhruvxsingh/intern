@@ -1,0 +1,14 @@
+{
+  "pages": [
+    {
+      "page_number": 1,
+      "status": "empty",
+      "rooms": []
+    },
+    {
+      "page_number": 2,
+      "status": "empty",
+      "rooms": []
+    }
+  ]
+}

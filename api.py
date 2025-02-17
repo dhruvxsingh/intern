@@ -8,16 +8,19 @@ from realestate.spiders.properties_spider import PropertiesSpider
 import threading
 import subprocess
 import os
+from dotenv import load_dotenv
+
 # Initialize Flask app
 app = Flask(__name__)
 cors = CORS(app)
-# Supabase credentials
-url = "https://orivuzqpjowmgjjxgvwh.supabase.co" 
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaXZ1enFwam93bWdqanhndndoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczODg0ODA3MSwiZXhwIjoyMDU0NDI0MDcxfQ.NxgByv8fAqJuC8gSyFaAp5MZlyM-_0LCnr7GTWBLFhc" 
 
+load_dotenv()
+
+# Supabase credentials
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_KEY")
 # Create Supabase client
 supabase: Client = create_client(url, key)
-
 
 @app.route("/properties", methods=["GET"])
 def get_properties():

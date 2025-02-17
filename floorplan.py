@@ -25,65 +25,84 @@ import json
 import tempfile
 from pdf2image import convert_from_path
 from gradio_client import Client, handle_file
+from dotenv import load_dotenv
 
-# Initialize Molmo AI client
-client = Client("fancyfeast/joy-caption-alpha-two")
+load_dotenv()
 
-# Convert PDF to images
+client = Client(os.getenv("MOLMO_KEY")) 
 images = convert_from_path('Grandeur Floor Plan (1).pdf')
 
-# Process all pages
 output = {"pages": []}
 
 with tempfile.TemporaryDirectory() as temp_dir:
     for page_num, image in enumerate(images, start=1):
         try:
-            # Save image to temp file
             temp_path = os.path.join(temp_dir, f"page_{page_num}.png")
             image.save(temp_path, "PNG")
             
-            # Process with Molmo AI
             result = client.predict(
                 input_image=handle_file(temp_path),
                 caption_type="Descriptive",
                 caption_length="long",
                 extra_options=[],
                 name_input="N/A",
-                custom_prompt="""Analyze this floor plan and list all rooms with dimensions. 
-                Output format: 
-                Room: [Name], Dimensions: [Length x Width], Area: [Area sqft].
-                Only include numbered room data.""",
+                custom_prompt="""Analyze this floor plan. List ALL rooms with dimensions 
+                in format: [Room Name] ([Length]X[Width]). Include ONLY numbered rooms 
+                and main spaces like kitchen, bedroom, toilet.""",
                 api_name="/stream_chat"
             )
+
+            # Extract the actual response
+            caption = result[1] if isinstance(result, tuple) else str(result)
             
-            # Parse the caption into structured data
+            # Improved parsing for numbered list format
             rooms = []
-            for line in result[1].split('\n'):
-                if "Room:" in line:
-                    parts = line.strip('- ').split(', ')
-                    room_data = {
-                        "room": parts[0].split(': ')[1],
-                        "dimensions": parts[1].split(': ')[1],
-                        "area": parts[2].split(': ')[1]
-                    }
-                    rooms.append(room_data)
-            
+            for line in caption.split('\n'):
+                line = line.strip()
+                
+                # Handle numbered items like "1. Kitchen (4.2X3.6)"
+                if line and line[0].isdigit() and '(' in line:
+                    try:
+                        # Remove numbering and split components
+                        clean_line = line.split('.', 1)[1].strip()
+                        room_part, dim_part = clean_line.split('(', 1)
+                        
+                        room_name = room_part.strip()
+                        dimensions = dim_part.split(')')[0].strip().lower().replace('x', 'X')
+                        
+                        # Convert to float dimensions
+                        length, width = map(float, dimensions.split('X'))
+                        area = round(length * width, 2)
+                        
+                        rooms.append({
+                            "room": room_name,
+                            "dimensions": f"{length}X{width}",
+                            "area": f"{area} sqm"  # Assuming meters from decimal values
+                        })
+                    except Exception as e:
+                        print(f"Skipping line: {line} - Error: {str(e)}")
+                        continue
+
             output["pages"].append({
                 "page_number": page_num,
-                "status": "success",
+                "status": "success" if rooms else "empty",
                 "rooms": rooms
             })
             
         except Exception as e:
+            # Handle quota error specifically
+            error_msg = str(e)
+            if "GPU quota" in error_msg:
+                error_msg += "\nSolution: Create a free Hugging Face account at https://huggingface.co/join"
+                
             output["pages"].append({
                 "page_number": page_num,
                 "status": "error",
-                "error": str(e),
+                "error": error_msg,
                 "rooms": []
             })
 
-# Save to JSON
 with open("floor_plan_data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print("Processing complete! Check floor_plan_data.json")
+print("Processing complete!")
